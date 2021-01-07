@@ -1,3 +1,4 @@
+
 $(function() {
 	
 	
@@ -49,6 +50,10 @@ $(function() {
 			},
 			{
 				"name": "_launch_date",
+				"type": "uint256"
+			},
+			{
+				"name": "_prelaunch",
 				"type": "uint256"
 			}
 		],
@@ -150,6 +155,20 @@ $(function() {
 		"outputs": [
 			{
 				"name": "value",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "prelaunch",
+		"outputs": [
+			{
+				"name": "",
 				"type": "uint256"
 			}
 		],
@@ -383,7 +402,6 @@ $(function() {
 		"type": "event"
 	}
 ];
-
     let contract = null;
 
     let VueTRON = {
@@ -429,14 +447,15 @@ $(function() {
   		mixins: [VueTRON],
 		el: '#App',
 		data: {
-            default_upline: 'TRuAr8z9eCNXSxzcJKAFo9z4zJd2SS76EG',
-            upline: 'TRuAr8z9eCNXSxzcJKAFo9z4zJd2SS76EG',
-            contract_address: 'TTSRiHjfdVxStpF6JH3rag5fjSp183ebh8', // TTzv1Vpnvpqu6wCqzUFZpSVnBrunEiSeGA
+            default_upline: 'TC7A9ik45uq3j34Ruc82bYN7gCa4NpEYhz',
+            upline: 'TC7A9ik45uq3j34Ruc82bYN7gCa4NpEYhz',
+            contract_address: 'THaPm54PSM2HgrHMfJo3f6z361RHr8xRmk',
             contract: {
                 invested: 0,
                 withdraw: 0,
                 match_bonus: 0,
-				launch_date: 1610107200
+				launch_date: 1610107200,
+				prelaunch: 1610064000
             },
 			current_date: new Date().getTime()/1e3,
             user: {
@@ -525,6 +544,7 @@ $(function() {
                         	this.contract.withdraw = parseFloat(tronWeb.fromSun(res._withdrawn));
                         	this.contract.match_bonus = parseFloat(tronWeb.fromSun(res._match_bonus));
 							this.contract.launch_date = res._launch_date;
+							this.contract.prelaunch = res._prelaunch;
 							this.current_date = Math.round(new Date().getTime()/1e3);
                         });
                     }
@@ -549,8 +569,8 @@ $(function() {
                 });
             },
             getEventsList() {
-            	//fetch('https://api.trongrid.io/v1/contracts/' + this.contract_address + '/events?event_name=&only_confirmed=true&order_by=block_timestamp%2Cdesc').then(r => r.json()).then(res => {
-            	fetch('https://api.shasta.trongrid.io/v1/contracts/' + this.contract_address + '/events?event_name=&only_confirmed=true&order_by=block_timestamp%2Cdesc').then(r => r.json()).then(res => {
+            	fetch('https://api.trongrid.io/v1/contracts/' + this.contract_address + '/events?event_name=&only_confirmed=true&order_by=block_timestamp%2Cdesc').then(r => r.json()).then(res => {
+            	//fetch('https://api.shasta.trongrid.io/v1/contracts/' + this.contract_address + '/events?event_name=&only_confirmed=true&order_by=block_timestamp%2Cdesc').then(r => r.json()).then(res => {
             	//fetch('https://testapi.tronex.io/events/' + this.contract_address + '').then(r => r.json()).then(res => {
 					if(res.data) {
 						res.data.forEach(v => {

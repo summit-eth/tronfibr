@@ -27,11 +27,18 @@
 		<img src="img/logo.png" alt="TRONFIBER">
 		<!--h1 bodyfont>INVEST &middot; PROFIT &middot; REPEAT</h1-->
 	</div>
-	<section v-if="contract.launch_date > current_date" id="countdown">
+	<section v-if="contract.launch_date > current_date && contract.prelaunch < current_date" id="countdown">
 		Launching in {{ countdown(new Date(contract.launch_date * 1000)).toString() }}!
 		<br><br>
 		Early Investments available (profit starts after launch date).
 		<br>
+		+5% referral bonus on every level during pre-launch!
+	</section>
+	<section v-if="contract.prelaunch > current_date" id="countdown">
+		Pre-launching in {{ countdown(new Date(contract.prelaunch * 1000)).toString() }}!
+		<br><br>
+		Early Investments will be available (profit starts after launch date).
+		<br><br>
 		+5% referral bonus on every level during pre-launch!
 	</section>
 	<section>
@@ -58,19 +65,23 @@
 		<div column>
 			<div id="wallet">
 				<span bold>YOUR WALLET</span>
-				<span id="wallet_balance">4292942.00 TRX</span>
-				<span id="wallet_address">TLcrenBEBPFUKxAR9AdXqzLdFqqxrbJXhp</span>
+				<span id="wallet_balance">{{ user.trx }} TRX</span>
+				<span id="wallet_address">{{ tron.account }}</span>
 			</div>
 			<div id="contract">
 				<span bold>CONTRACT INFO</span>
 				<table noborder>
 					<tr>
 						<td>TOTAL INVESTED</td>
-						<td>13492232.55 TRX</td>
+						<td>{{ contract.invested }} TRX</td>
 					</tr>
 					<tr>
 						<td>TOTAL REFERRAL</td>
-						<td>13492232.55 TRX</td>
+						<td>{{ contract.match_bonus }} TRX</td>
+					</tr>
+					<tr>
+						<td>TOTAL WITHDRAWN</td>
+						<td>{{ contract.withdraw }} TRX</td>
 					</tr>
 				</table>
 				<!--br>
@@ -116,8 +127,13 @@
 						<td>12.5% DAILY</td>
 					</tr>
 				</table>
-				<input type="number" min="100" max="1000000" placeholder="100 TRX" v-model.number="dep_amount" @change="dep_amount = dep_amount < 100 ? 100 : dep_amount">
-				<button @click.prevent="deposit(dep_amount)">INVEST NOW</button>
+				<span v-if="current_date >= contract.prelaunch">
+					<input type="number" min="100" max="1000000" placeholder="100 TRX" v-model.number="dep_amount" @change="dep_amount = dep_amount < 100 ? 100 : dep_amount">
+					<button @click.prevent="deposit(dep_amount)">INVEST NOW</button>
+				</span>
+				<span v-else>
+					Pre-launching in {{ countdown(new Date(contract.prelaunch * 1000)).toString() }}
+				</span>
 			</div>
 			<div id="data">
 				<span bold>DASHBOARD</span>
@@ -128,7 +144,8 @@
 					<tr><td>Total Withdrawable:</td><td>{{ user.for_withdraw }}</td></tr>
 				</table>
 				<br>
-				<button id="btn_withdraw" @click.prevent="withdraw()">WITHDRAW</button>
+				<button v-if="current_date >= contract.launch_date" id="btn_withdraw" @click.prevent="withdraw()">WITHDRAW</button>
+				<span v-else>Launching in {{ countdown(new Date(contract.launch_date * 1000)).toString() }}</span>
 				<br>
 				<br>
 				<span bold>YOUR INVESTMENTS</span>
