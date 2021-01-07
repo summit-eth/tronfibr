@@ -1,101 +1,293 @@
-
 <!doctype html>
-<html lang="en" class="perfect-scrollbar-off nav-open">
-
+<html lang="en-us">
 <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
-    <meta name="theme-color" content="#000000">
-    <link rel="manifest" href="manifest.json">
-    <link rel="shortcut icon" href="favicon.ico">
-    <link rel="apple-touch-icon" sizes="76x76" href="apple-icon.png">
-    <link href="static/fonts/import.css" rel="stylesheet">
-    <title>TronFiber - 40% daily profit up to 200%</title>
-    <link href="static/css/toastify.css" rel="stylesheet">
-    <link href="static/css/main.css" rel="stylesheet">
+<link rel="icon" href="favicon.ico">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="TRONFIBER SMART CONTRACT">
+<title>TronFiber</title>
+<link rel="stylesheet" href="fonts/import.css">
+<link rel="stylesheet" href="css/reset.css">
+<link rel="stylesheet" href="css/jqueryui.css">
+<link rel="stylesheet" href="css/custom.css?q=tq">
+<link rel="stylesheet" href="css/custom-slider.css">
+<script src="js/jquery.min.js"></script>
+<script src="js/jquery.ui.js"></script>
+<script src="js/jquery.ui.touch-punch.min.js"></script>
+<script src="js/jquery.toast.min.js"></script>
+<script src="js/jquery.cookie.min.js"></script>
+<script src="js/moment.js"></script>
+<script src="js/countdown.js"></script>
+<script src="js/tronweb.js"></script>
+<style>[v-cloak] { display:none; }</style>
 </head>
+<body>
+<div class="b-app" id="App" v-cloak>
+	<div id="header">
+		<img src="img/logo.png" alt="TRONFIBER">
+		<!--h1 bodyfont>INVEST &middot; PROFIT &middot; REPEAT</h1-->
+	</div>
+	<section v-if="contract.launch_date > current_date" id="countdown">
+		Launching in {{ countdown(new Date(contract.launch_date * 1000)).toString() }}!
+	</section>
+	<section>
+		<div column hero style="vertical-align: middle">
+			<h2 bodyfont bold>TRANSPARENCY</h2>
+			<p style="padding: 16px">
+			  Decentralization And Transparency. A new &amp; stable smart contract with unique implementations and long-term development plan.
+			</p>
+		</div>
+		<div column hero style="vertical-align: middle">
+			<h2 bodyfont bold>HIGH PROFIT</h2>
+			<p style="padding: 16px">
+			 This is a highly profitable investment which can significantly increase your capital in short terms. We create a financial world for project participants where everyone can find financial independence. 
+			</p>
+		</div>
+		<div column hero style="vertical-align: middle">
+			<h2 bodyfont bold>AFFILIATE PROGRAM</h2>
+			<p style="padding: 16px">
+			  The most active users can earn an additional 15% on the three-level referral system.
+			</p>
+		</div>
+	</section>
+	<section>
+		<div column>
+			<div id="wallet">
+				<span bold>YOUR WALLET</span>
+				<span id="wallet_balance">4292942.00 TRX</span>
+				<span id="wallet_address">TLcrenBEBPFUKxAR9AdXqzLdFqqxrbJXhp</span>
+			</div>
+			<div id="contract">
+				<span bold>CONTRACT INFO</span>
+				<table noborder>
+					<tr>
+						<td>TOTAL INVESTED</td>
+						<td>13492232.55 TRX</td>
+					</tr>
+					<tr>
+						<td>TOTAL REFERRAL</td>
+						<td>13492232.55 TRX</td>
+					</tr>
+				</table>
+				<!--br>
+				<span bold>TOP 1 INVESTOR</span>
+				<span>TLcrenBEBPFUKxAR9AdXqzLdFqqxrbJXhp</span>
+				<br>
+				<br>
+				<span bold>TOP 2 INVESTOR</span>
+				<span>TLcrenBEBPFUKxAR9AdXqzLdFqqxrbJXhp</span>
+				<br>
+				<br>
+				<span bold>TOP 3 INVESTOR</span>
+				<span>TLcrenBEBPFUKxAR9AdXqzLdFqqxrbJXhp</span-->
+			</div>
+			<br><br>
+			<a class="button" href="#">SMART CONTRACT</a>&nbsp;&nbsp;&nbsp;
+			<a class="button" href="#">TELEGRAM SUPPORT</a>
+			<br><br>
+			<br><br>
+		</div>
+		<div column>
+			<div id="actions">
+				<span bold>INVEST</span>
+				<table noborder>
+					<tr>
+						<td>TERM</td>
+						<td>16 DAYS</td>
+					</tr>
+					<tr>
+						<td>RETURN</td>
+						<td>200%</td>
+					</tr>
+					<tr>
+						<td>MIN DEPOSIT</td>
+						<td>100 TRX</td>
+					</tr>
+					<tr>
+						<td>MAX DEPOSIT</td>
+						<td>100 000 TRX</td>
+					</tr>
+					<tr>
+						<td>DAILY RATE</td>
+						<td>12.5% DAILY</td>
+					</tr>
+				</table>
+				<input type="number" min="100" max="1000000" placeholder="100 TRX" v-model.number="dep_amount" @change="dep_amount = dep_amount < 100 ? 100 : dep_amount">
+				<button @click.prevent="deposit(dep_amount)">INVEST NOW</button>
+			</div>
+			<div id="data">
+				<span bold>DASHBOARD</span>
+				<br>
+				<table noborder>
+					<tr><td>Total Invested</td><td>{{ user.total_invested }}</td></tr>
+					<tr><td>Rewarded Bonus:</td><td>{{ user.total_match_bonus }}</td></tr>
+					<tr><td>Total Withdrawable:</td><td>{{ user.for_withdraw }}</td></tr>
+				</table>
+				<br>
+				<button id="btn_withdraw" @click.prevent="withdraw()">WITHDRAW</button>
+				<br>
+				<br>
+				<span bold>YOUR INVESTMENTS</span>
+				<br>
+				<table noborder>
+					<tr><td bold>Amount</td><td bold>Ends in</td><td bold>Withdrawable</td></tr>
+					<tr v-for="dep in user.deposits" v-if="dep[1] != 0">
+						<td>{{ tronWeb.fromSun(dep[1]) }} trx</td><td>{{ countdown(new Date(new Date().getTime() + (dep[2] * 1000))).toString() }}</td><td>{{ tronWeb.fromSun(dep[3]) }} trx</td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div column hero id="referrals">
+			<span bold>REFERRED BY:</span>
+			<br>
+			<span>{{ upline }}</span>
+			<br><br>
+			<span bold>YOUR REFERRAL LINK:</span>
+			<br>
+			<span>https://tronfiber.cc?ref=</span>
+			<br><br>
+			<button class="copytext" @click="copyText(location.origin + '/?ref=' + tron.account)">COPY</button>
+			<hr>
+			<span bold>YOUR REFERRALS</span><br>
+			<span>Referral bonus is automatically added to your Tron wallet when they invest.</span>
+			<table noborder>
+				<tr><td>Level</td><td>Referral Bonus</td><td v-if="user.total_invested > 0">Referrals</td></tr>
+				<tr><td>1</td><td><span v-if="contract.launch_date > current_date" highlight>13%! &#128293;</span><span v-else>8%</span></td><td v-if="user.total_invested > 0" id="ref_lv1">{{ user.structure[0] }}</td></tr>
+				<tr><td>2</td><td><span v-if="contract.launch_date > current_date" highlight>9%! &#128293;</span><span v-else>4%</span></td><td v-if="user.total_invested > 0" id="ref_lv2">{{ user.structure[1] }}</td></tr>
+				<tr><td>3</td><td><span v-if="contract.launch_date > current_date" highlight>6%! &#128293;</span><span v-else>1%</span></td><td v-if="user.total_invested > 0" id="ref_lv3">{{ user.structure[2] }}</td></tr>
+			</table>
+		</div>
+	</section>
+	<section style="padding: 32px; text-align: center; color: #fff; font-size: 16px">
+		<p>
+			TronFiber is a crowdfunded Smart Contract that returns 12.5% Daily for every investment made starting from 100 TRX. All you need is your Tron Wallet and some TRON (TRX) and you can start investing.
+			<br>
+			You can increase your profits even more by referring new users using your referral link.
+		</p>
+		<br>
+		<br>
+		<p v-if="contract.launch_date <= current_date" style="font-size: 12px">
+			Contract running for {{ countdown(new Date(contract.launch_date * 1000)).toString() }}
+		</p>
+	</section>
+	<footer>
+		&copy; TronFiber&trade; 2021
+	</footer>
+</div>
+<style>
 
-<body><noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
-    
-    <script>
-        ! function(e) {
-            function r(r) {
-                for (var n, l, f = r[0], i = r[1], a = r[2], c = 0, s = []; c < f.length; c++) l = f[c], Object.prototype.hasOwnProperty.call(o, l) && o[l] && s.push(o[l][0]), o[l] = 0;
-                for (n in i) Object.prototype.hasOwnProperty.call(i, n) && (e[n] = i[n]);
-                for (p && p(r); s.length;) s.shift()();
-                return u.push.apply(u, a || []), t()
-            }
+#header {
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	text-align: center;
+	z-index: -1;
+	background: #0a0a0a;
+	background-image: url(./img/hero-bg.jpg);
+	background-size: cover;
+	box-shadow: inset 0px -4px 16px -4px #000;
+	padding: 32px 0px 32px 0px;
+}
 
-            function t() {
-                for (var e, r = 0; r < u.length; r++) {
-                    for (var t = u[r], n = !0, f = 1; f < t.length; f++) {
-                        var i = t[f];
-                        0 !== o[i] && (n = !1)
-                    }
-                    n && (u.splice(r--, 1), e = l(l.s = t[0]))
-                }
-                return e
-            }
-            var n = {},
-                o = {
-                    1: 0
-                },
-                u = [];
+#header img {
+	max-height: 128px;
+	position: relative;
+	z-index: 101;
+}
 
-            function l(r) {
-                if (n[r]) return n[r].exports;
-                var t = n[r] = {
-                    i: r,
-                    l: !1,
-                    exports: {}
-                };
-                return e[r].call(t.exports, t, t.exports, l), t.l = !0, t.exports
-            }
-            l.m = e, l.c = n, l.d = function(e, r, t) {
-                l.o(e, r) || Object.defineProperty(e, r, {
-                    enumerable: !0,
-                    get: t
-                })
-            }, l.r = function(e) {
-                "undefined" != typeof Symbol && Symbol.toStringTag && Object.defineProperty(e, Symbol.toStringTag, {
-                    value: "Module"
-                }), Object.defineProperty(e, "__esModule", {
-                    value: !0
-                })
-            }, l.t = function(e, r) {
-                if (1 & r && (e = l(e)), 8 & r) return e;
-                if (4 & r && "object" == typeof e && e && e.__esModule) return e;
-                var t = Object.create(null);
-                if (l.r(t), Object.defineProperty(t, "default", {
-                        enumerable: !0,
-                        value: e
-                    }), 2 & r && "string" != typeof e)
-                    for (var n in e) l.d(t, n, function(r) {
-                        return e[r]
-                    }.bind(null, n));
-                return t
-            }, l.n = function(e) {
-                var r = e && e.__esModule ? function() {
-                    return e.default
-                } : function() {
-                    return e
-                };
-                return l.d(r, "a", r), r
-            }, l.o = function(e, r) {
-                return Object.prototype.hasOwnProperty.call(e, r)
-            }, l.p = "/";
-            var f = this.webpackJsonptronhero = this.webpackJsonptronhero || [],
-                i = f.push.bind(f);
-            f.push = r, f = f.slice();
-            for (var a = 0; a < f.length; a++) r(f[a]);
-            var p = i;
-            t()
-        }([])
-    </script>
-    
-    <script src="static/js/react.js"></script>
-    <script src="static/js/main.js"></script>
+#countdown {
+	padding: 32px;
+	font-weight: 700;
+	font-size: 16px;
+	text-align: center;
+}
+
+[hero], #contract, #wallet, #actions, #data {
+	margin: 0px auto;
+	border-radius: 8px;
+	box-shadow: 0px 8px 24px -16px #000;
+	border: none;
+	padding: 16px;
+	margin-bottom: 32px;
+}
+
+[hero] {
+	background: #fff;
+	text-align: justify;
+	font-size: 16px;
+}
+
+#contract {
+	color: #fff;
+	box-shadow: none !important;
+	background: linear-gradient(0deg, #580017, #e8003c);
+	text-align: left;
+	font-size: 16px;
+}
+
+#wallet {
+	background: linear-gradient(150deg, #ff0042, #222);
+	text-align: left;
+	font-size: 16px;
+	color: #fff;
+}
+
+#actions {
+	background: #fff;
+	text-align: left;
+	font-size: 16px;
+}
+
+#data td:first-child,
+#contract td:first-child,
+#actions td:first-child {
+	text-align: left;
+	padding: 8px 0px;
+}
+
+#data td:last-child,
+#contract td:last-child,
+#actions td:last-child {
+	text-align: right;
+	padding: 8px 0px;
+}
+
+#data {
+	background: linear-gradient(45deg, #e0e0e0, #ffffff);
+	text-align: left;
+	font-size: 16px;
+}
+
+#referrals {
+	color: #fff;
+	box-shadow: none !important;
+	background: linear-gradient(0deg, #580017, #e8003c);
+}
+
+#wallet_balance {
+	display: block;
+	text-align: center !important;
+	font-size: 32px;
+	padding: 32px 0px;
+	text-shadow: -1px -1px 1px #000, 1px 1px 1px #ff0042;
+}
+
+#wallet_address {
+	font-size: 12px;
+	font-weight: 700;
+	text-align: left;
+}
+
+footer {
+	font-size: 12px;
+	text-align: center;
+	padding: 16px;
+	color: #ccc;
+}
+
+</style>
+<script src="js/vue.js"></script>
+<script src="js/custom.js?q=31"></script>
 </body>
-
 </html>
