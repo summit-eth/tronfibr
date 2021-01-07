@@ -27,7 +27,7 @@
 		<img src="img/logo.png" alt="TRONFIBER">
 		<!--h1 bodyfont>INVEST &middot; PROFIT &middot; REPEAT</h1-->
 	</div>
-	<section v-if="contract.launch_date < current_date" id="countdown">
+	<section v-if="contract.launch_date > current_date" id="countdown">
 		Launching in {{ countdown(new Date(contract.launch_date * 1000)).toString() }}!
 	</section>
 	<section>
