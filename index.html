@@ -153,7 +153,7 @@
 			<button class="copytext" @click="copyText(location.origin + '/?ref=' + tron.account)">COPY</button>
 			<hr>
 			<span bold>YOUR REFERRALS</span><br>
-			<span>Referral bonus is automatically added to your Tron wallet when they invest.</span>
+			<span>Referral bonus is <u>automatically sent to your Tron wallet</u> when they invest.</span>
 			<table noborder>
 				<tr><td>Level</td><td>Referral Bonus</td><td v-if="user.total_invested > 0">Referrals</td></tr>
 				<tr><td>1</td><td><span v-if="contract.launch_date > current_date" highlight>13%! &#128293;</span><span v-else>8%</span></td><td v-if="user.total_invested > 0" id="ref_lv1">{{ user.structure[0] }}</td></tr>
